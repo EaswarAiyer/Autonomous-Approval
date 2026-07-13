@@ -134,6 +134,7 @@
   .setting-row:last-of-type{margin-bottom:0;}
   .setting-label{padding-top:2px;font-weight:600;color:var(--text);}
   .options-col{display:flex;flex-direction:column;gap:12px;}
+  .options-row{display:flex;flex-wrap:wrap;gap:28px;align-items:center;}
   .option-line{display:flex;align-items:flex-start;gap:9px;}
   .option-line input[type="radio"]{
     margin-top:3px;width:15px;height:15px;accent-color:var(--blue);flex:0 0 auto;cursor:pointer;
@@ -331,24 +332,27 @@
           <div class="setting-label">Approve Patches</div>
           <div class="options-col">
 
-            <div class="option-line">
-              <input type="radio" name="approve-mode" id="mode-auto-no-test" checked>
-              <label for="mode-auto-no-test">Automatically without testing</label>
+            <div class="options-row">
+              <div class="option-line">
+                <input type="radio" name="approve-mode" id="mode-auto-no-test" checked>
+                <label for="mode-auto-no-test">Automatically without testing</label>
+              </div>
+
+              <div class="option-line">
+                <input type="radio" name="approve-mode" id="mode-test-approve">
+                <label for="mode-test-approve">Test and Approve</label>
+              </div>
+
+              <div class="option-line">
+                <input type="radio" name="approve-mode" id="mode-autonomous">
+                <label for="mode-autonomous">Autonomous Approval</label>
+              </div>
             </div>
 
-            <div class="option-line">
-              <input type="radio" name="approve-mode" id="mode-test-approve">
-              <label for="mode-test-approve">Test and Approve</label>
-            </div>
-            <div class="option-help" style="margin-top:-8px;">
+            <div class="option-help">
               You can choose to create a test group and test patches before deploying it to all the computers. Tested patches can be approved manually or you can choose to automate it.
             </div>
-
-            <div class="option-line">
-              <input type="radio" name="approve-mode" id="mode-autonomous">
-              <label for="mode-autonomous">Autonomous Approval</label>
-            </div>
-            <div class="option-help" style="margin-top:-8px;">
+            <div class="option-help">
               Endpoint Central scores every patch and approves it automatically once the patch clears the criteria you set below — no test group required.
             </div>
 
