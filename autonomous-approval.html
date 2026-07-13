@@ -1,0 +1,505 @@
+<title>Patch Approval Settings — Autonomous Approval</title>
+<style>
+  :root{
+    --navy:#1f2430;
+    --sidebar-bg:#f4f5f7;
+    --sidebar-active:#e7effd;
+    --border:#dde1e6;
+    --border-soft:#e8eaed;
+    --text:#242a35;
+    --text-muted:#5f6675;
+    --text-faint:#8b909c;
+    --blue:#1467e0;
+    --blue-dark:#0d54bd;
+    --blue-tint:#eaf1fd;
+    --card-bg:#f6f7f9;
+    --green:#1c9c6e;
+    --amber:#c07a00;
+    --radius:4px;
+    font-variant-numeric: tabular-nums;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--text);
+    background:#fff;
+    font-size:13.5px;
+    line-height:1.45;
+  }
+  a{color:var(--blue);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  /* ---------- Top nav ---------- */
+  .topnav{
+    background:var(--navy);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    height:46px;
+    padding:0 16px;
+    gap:22px;
+    font-size:13px;
+  }
+  .topnav .brand{
+    display:flex;align-items:center;gap:8px;
+    font-weight:600;font-size:14.5px;letter-spacing:.2px;
+    margin-right:6px;white-space:nowrap;
+  }
+  .brand .logo-mark{
+    width:20px;height:20px;border-radius:5px;
+    background:conic-gradient(from 220deg,#2fa8e0,#3fbf6e 35%,#f2c94c 65%,#ef5b5b 100%);
+    flex:0 0 auto;
+  }
+  .topnav nav{display:flex;gap:20px;flex:1;min-width:0;}
+  .topnav nav span{
+    color:#c7cbd6;cursor:default;white-space:nowrap;padding:2px 0;
+  }
+  .topnav nav span.active{
+    color:#fff;font-weight:600;border-bottom:2px solid var(--blue);
+    padding-bottom:14px;margin-bottom:-14px;
+  }
+  .topnav .spacer{flex:1}
+  .topnav .trial-btn{
+    background:var(--blue);color:#fff;border-radius:3px;
+    padding:6px 14px;font-weight:600;font-size:12.5px;white-space:nowrap;
+  }
+  .topnav .icons{display:flex;align-items:center;gap:16px;margin-left:16px;color:#c7cbd6;}
+  .topnav .avatar{
+    width:24px;height:24px;border-radius:50%;
+    background:#5a6270;display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:700;color:#fff;
+  }
+
+  /* ---------- Shell ---------- */
+  .shell{display:flex;align-items:stretch;min-height:calc(100vh - 46px);}
+
+  .railnav{
+    width:64px;flex:0 0 auto;background:#fff;border-right:1px solid var(--border);
+    display:flex;flex-direction:column;align-items:center;padding-top:6px;
+  }
+  .railnav .rail-item{
+    width:100%;padding:11px 0 9px;display:flex;flex-direction:column;
+    align-items:center;gap:4px;color:var(--text-muted);font-size:11px;cursor:default;
+  }
+  .railnav .rail-item svg{width:19px;height:19px;}
+  .railnav .rail-item.active{color:var(--blue);position:relative;}
+  .railnav .rail-item.active::before{
+    content:"";position:absolute;left:0;top:6px;bottom:6px;width:3px;
+    background:var(--blue);border-radius:0 2px 2px 0;
+  }
+
+  .sidebar{
+    width:210px;flex:0 0 auto;background:var(--sidebar-bg);
+    border-right:1px solid var(--border);padding:10px 0;
+  }
+  .sidebar .group-title{
+    display:flex;align-items:center;gap:6px;padding:7px 16px;
+    font-weight:600;color:var(--text);font-size:13px;
+  }
+  .sidebar .group-title svg{width:11px;height:11px;color:var(--text-faint);}
+  .sidebar ul{list-style:none;margin:0 0 6px;padding:0;}
+  .sidebar li{
+    padding:7px 16px 7px 30px;color:var(--text-muted);cursor:default;
+    border-left:3px solid transparent;
+  }
+  .sidebar li.active{
+    background:var(--sidebar-active);color:var(--blue);font-weight:600;
+    border-left:3px solid var(--blue);
+  }
+  .sidebar .group-title.tools{margin-top:8px;}
+
+  main{flex:1;min-width:0;padding:22px 26px 60px;background:#fff;}
+
+  .toplinks{
+    display:flex;justify-content:flex-end;gap:18px;font-size:12.5px;margin-bottom:14px;
+  }
+  .toplinks a{display:flex;align-items:center;gap:5px;}
+  .toplinks svg{width:14px;height:14px;}
+
+  .panel{
+    border:1px solid var(--border);border-radius:var(--radius);margin-bottom:22px;background:#fff;
+  }
+  .panel-header{
+    background:var(--card-bg);border-bottom:1px solid var(--border);
+    padding:10px 16px;font-weight:600;font-size:13.5px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .panel-body{padding:20px 22px 22px;}
+
+  /* ---------- Settings rows ---------- */
+  .setting-row{
+    display:grid;grid-template-columns:190px 1fr;gap:18px;margin-bottom:20px;
+  }
+  .setting-row:last-of-type{margin-bottom:0;}
+  .setting-label{padding-top:2px;font-weight:600;color:var(--text);}
+  .options-col{display:flex;flex-direction:column;gap:12px;}
+  .option-line{display:flex;align-items:flex-start;gap:9px;}
+  .option-line input[type="radio"]{
+    margin-top:3px;width:15px;height:15px;accent-color:var(--blue);flex:0 0 auto;cursor:pointer;
+  }
+  .option-line label{cursor:pointer;font-weight:600;color:var(--text);}
+  .option-help{
+    grid-column:2;margin-top:-6px;color:var(--text-muted);font-size:12.5px;max-width:640px;
+  }
+
+  /* Autonomous approval expandable card */
+  .auto-card{
+    grid-column:2;
+    margin-top:2px;
+    border:1px solid #d3e2fa;
+    border-radius:10px;
+    background:#eef3fd;
+    padding:18px 22px 20px;
+    max-width:640px;
+  }
+  .score-title{font-weight:600;color:var(--text);font-size:14px;margin-bottom:4px;}
+  .score-sub{color:var(--text);font-size:13px;margin-bottom:18px;}
+
+  .slider-wrap{position:relative;height:34px;margin:0 6px 22px;}
+  .slider-track-bg{
+    position:absolute;top:14px;left:0;right:0;height:6px;border-radius:3px;background:#c3d2ec;
+  }
+  .slider-fill{
+    position:absolute;top:14px;left:0;height:6px;border-radius:3px;background:var(--blue);
+    pointer-events:none;
+  }
+  #score-slider{
+    position:absolute;top:6px;left:-10px;width:calc(100% + 20px);height:22px;margin:0;
+    -webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;z-index:2;
+  }
+  #score-slider::-webkit-slider-runnable-track{background:transparent;height:22px;}
+  #score-slider::-webkit-slider-thumb{
+    -webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:transparent;border:none;cursor:grab;
+  }
+  #score-slider::-moz-range-track{background:transparent;height:22px;}
+  #score-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:transparent;border:none;cursor:grab;}
+  .slider-chip{
+    position:absolute;top:-8px;transform:translateX(-50%);
+    display:flex;align-items:center;gap:8px;
+    background:#fff;border:1px solid #d7deea;border-radius:20px;
+    padding:4px 8px;font-weight:600;font-size:13px;color:var(--text);
+    box-shadow:0 1px 3px rgba(20,30,60,.14);
+    pointer-events:none;white-space:nowrap;z-index:3;
+  }
+  .chip-arrow{
+    pointer-events:auto;cursor:pointer;border:none;background:transparent;color:var(--text-faint);
+    font-size:15px;line-height:1;padding:0 2px;
+  }
+  .chip-arrow:hover{color:var(--blue);}
+
+  .maturity-row{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    padding-top:2px;
+  }
+  .maturity-row .maturity-label{color:var(--text);font-size:13px;}
+  .maturity-input{
+    display:flex;align-items:stretch;background:#fff;border:1px solid #d7deea;border-radius:8px;
+    overflow:hidden;flex:0 0 auto;
+  }
+  .maturity-input input[type="number"]{
+    width:56px;border:none;padding:8px 10px;font-size:13px;text-align:center;color:var(--text);
+    font-variant-numeric:tabular-nums;background:transparent;
+  }
+  .maturity-input input[type="number"]:focus{outline:none;}
+  .maturity-input .unit-select-wrap{
+    display:flex;align-items:center;gap:6px;padding:0 12px;border-left:1px solid #e4e9f2;color:var(--text);
+    font-size:13px;font-weight:500;
+  }
+  .maturity-input select{
+    border:none;background:transparent;font:inherit;color:var(--text);font-weight:500;cursor:pointer;
+    -webkit-appearance:none;appearance:none;padding-right:2px;
+  }
+  .maturity-input select:focus{outline:none;}
+  .unit-select-wrap .caret{color:var(--text-faint);font-size:10px;}
+
+  .score-note{
+    margin-top:16px;font-size:12px;color:var(--text-muted);line-height:1.5;
+  }
+  .score-note b{color:var(--text);}
+
+  .radio-group{display:flex;gap:16px;align-items:center;}
+  .radio-group label{margin-right:4px;font-weight:400;color:var(--text);}
+  .radio-group input{accent-color:var(--blue);margin-right:4px;vertical-align:middle;}
+
+  .btn-row{display:flex;gap:10px;margin-top:22px;}
+  .btn{
+    padding:7px 20px;border-radius:3px;font-weight:600;font-size:13px;border:1px solid var(--border);
+    cursor:pointer;background:#eef0f2;color:#9aa0aa;
+  }
+  .btn.enabled{background:var(--blue);border-color:var(--blue);color:#fff;cursor:pointer;}
+  .btn.cancel{background:#fff;color:var(--text);}
+  .btn.cancel:hover{background:#f5f6f8;}
+
+  /* ---------- Test groups ---------- */
+  .groups-header{
+    display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
+  }
+  .groups-header h2{font-size:14.5px;margin:0;}
+  .add-group-btn{
+    background:var(--blue);color:#fff;border:none;border-radius:3px;
+    padding:8px 16px;font-weight:600;font-size:12.5px;cursor:pointer;
+  }
+  .group-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;
+  }
+  .group-card{
+    background:var(--card-bg);border:1px solid var(--border-soft);border-radius:5px;padding:16px 18px;
+  }
+  .group-card .gc-top{
+    display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
+  }
+  .group-card .gc-name{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--blue);}
+  .group-card .gc-name svg{width:15px;height:15px;color:var(--text-faint);}
+  .group-card .gc-menu{color:var(--text-faint);font-weight:700;letter-spacing:1px;cursor:default;}
+  .group-card .gc-stat{display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0;color:var(--text-muted);}
+  .group-card .gc-stat b{color:var(--text);font-weight:600;}
+  .group-card .gc-stat a{font-weight:600;}
+
+  .fade-enter{animation:fadeSlide .18s ease-out;}
+  @keyframes fadeSlide{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+  @media (prefers-reduced-motion: reduce){ .fade-enter{animation:none;} }
+</style>
+
+<div class="topnav">
+  <div class="brand"><span class="logo-mark"></span> Endpoint Central</div>
+  <nav>
+    <span>Home</span>
+    <span>Configurations</span>
+    <span class="active">Threats &amp; Patches</span>
+    <span>Software Deployment</span>
+    <span>Inventory</span>
+    <span>OS Deployment</span>
+    <span>MDM</span>
+    <span>Tools</span>
+    <span>Agent</span>
+    <span>Admin</span>
+    <span>Browsers</span>
+    <span>&hellip;</span>
+  </nav>
+  <div class="trial-btn">Start your 30 days free trial</div>
+  <div class="icons">
+    <span>&#8635;</span><span>&#9679;&#9679;&#9679;</span><span>&#128274;</span><span>&#128269;</span><span>&#9889;</span>
+  </div>
+  <div class="avatar">EA</div>
+</div>
+
+<div class="shell">
+  <div class="railnav">
+    <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Dashboard</div>
+    <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6z"/></svg>Threats</div>
+    <div class="rail-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Patches</div>
+    <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="14" rx="1.5"/><path d="M9 21h6M12 17v4"/></svg>Systems</div>
+    <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Deployment</div>
+    <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 6 9 17l-5-5"/></svg>Compliance</div>
+    <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19V9M12 19V5M20 19v-7"/></svg>Reports</div>
+    <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/></svg>Settings</div>
+    <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v10M12 13l-4-4M12 13l4-4"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>Update</div>
+  </div>
+
+  <div class="sidebar">
+    <div class="group-title">Deployment <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg></div>
+    <ul>
+      <li>Manual Deployment</li>
+      <li class="active">Test and Approve</li>
+      <li>Automate Patch Deployment</li>
+      <li>Disable Automatic Updates</li>
+      <li>Security Configurations</li>
+      <li>Software Uninstallation</li>
+      <li>Deployment Policies</li>
+      <li>Script Repository</li>
+      <li>Trash</li>
+    </ul>
+    <div class="group-title tools">Tools <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg></div>
+    <ul>
+      <li>Remote Shutdown</li>
+      <li>Wake on LAN</li>
+    </ul>
+  </div>
+
+  <main>
+    <div class="toplinks">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M10 9l5 3-5 3z"/></svg>Watch Demo</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 10a3 3 0 1 1 4 2.8c-.6.3-1 .9-1 1.7M12 17.5h.01"/></svg>Do you want to customize automatic approval of patches?</a>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">Patch Approval Settings</div>
+      <div class="panel-body">
+
+        <div class="setting-row">
+          <div class="setting-label">Approve Patches</div>
+          <div class="options-col">
+
+            <div class="option-line">
+              <input type="radio" name="approve-mode" id="mode-auto-no-test" checked>
+              <label for="mode-auto-no-test">Automatically without testing</label>
+            </div>
+
+            <div class="option-line">
+              <input type="radio" name="approve-mode" id="mode-test-approve">
+              <label for="mode-test-approve">Test and Approve</label>
+            </div>
+            <div class="option-help" style="margin-top:-8px;">
+              You can choose to create a test group and test patches before deploying it to all the computers. Tested patches can be approved manually or you can choose to automate it.
+            </div>
+
+            <div class="option-line">
+              <input type="radio" name="approve-mode" id="mode-autonomous">
+              <label for="mode-autonomous">Autonomous Approval</label>
+            </div>
+            <div class="option-help" style="margin-top:-8px;">
+              Endpoint Central scores every patch and approves it automatically once the patch clears the criteria you set below — no test group required.
+            </div>
+
+            <div class="auto-card" id="autonomous-card" hidden>
+              <div class="score-title">Patch Reliability Score</div>
+              <div class="score-sub">Approve when patch reliability score is greater than</div>
+
+              <div class="slider-wrap">
+                <div class="slider-track-bg"></div>
+                <div class="slider-fill" id="slider-fill"></div>
+                <input type="range" id="score-slider" min="0" max="10" value="8" step="1">
+                <div class="slider-chip" id="slider-chip">
+                  <button class="chip-arrow" type="button" id="score-dec" aria-label="Decrease score">&lsaquo;</button>
+                  <span id="chip-value">8</span>
+                  <button class="chip-arrow" type="button" id="score-inc" aria-label="Increase score">&rsaquo;</button>
+                </div>
+              </div>
+
+              <div class="maturity-row">
+                <span class="maturity-label">Reliability thresholds based on patch maturity</span>
+                <div class="maturity-input">
+                  <input type="number" id="maturity-days" min="1" value="1">
+                  <span class="unit-select-wrap">
+                    <select id="maturity-unit">
+                      <option value="Days">Days</option>
+                      <option value="Weeks">Weeks</option>
+                      <option value="Months">Months</option>
+                    </select>
+                    <span class="caret">&#9662;</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="score-note">
+                <b>Note:</b> It analyzes parameters like deployment success, failure, and uninstall rates to determine the score and find anomalies.
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-label">For the Existing Patches</div>
+          <div class="options-col">
+            <div class="radio-group">
+              <span><input type="radio" name="existing-mode" id="existing-retain" checked><label for="existing-retain">Retain Approval Status</label></span>
+              <span><input type="radio" name="existing-mode" id="existing-notapproved"><label for="existing-notapproved">Mark Patch as Not Approved</label></span>
+            </div>
+            <div class="option-help" style="margin-top:2px;">
+              The approval status of the existing patches, will be retained and the new patches will be marked as "Not Approved".
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn enabled" id="save-btn">Save</button>
+          <button class="btn cancel">Cancel</button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="panel" id="groups-panel" style="border:none;">
+      <div class="groups-header">
+        <h2>Test Groups</h2>
+        <button class="add-group-btn">Add Group</button>
+      </div>
+      <div class="group-grid">
+        <div class="group-card">
+          <div class="gc-top"><span class="gc-name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>check</span><span class="gc-menu">&#8942;</span></div>
+          <div class="gc-stat"><span>Download Pending</span><b>0</b></div>
+          <div class="gc-stat"><span>Not Approved</span><b>0</b></div>
+        </div>
+        <div class="group-card">
+          <div class="gc-top"><span class="gc-name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2 3 13l4 1 1 4 11-11z"/></svg>Engineering group</span><span class="gc-menu">&#8942;</span></div>
+          <div class="gc-stat"><span>Download Pending</span><b>0</b></div>
+          <div class="gc-stat"><span>Not Approved</span><b>0</b></div>
+        </div>
+        <div class="group-card">
+          <div class="gc-top"><span class="gc-name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3a6 6 0 0 0-6 6c0 5 6 12 6 12s6-7 6-12a6 6 0 0 0-6-6z"/></svg>MAC CG</span><span class="gc-menu">&#8942;</span></div>
+          <div class="gc-stat"><span>Download Pending</span><b>0</b></div>
+          <div class="gc-stat"><span>Not Approved</span><b>0</b></div>
+        </div>
+        <div class="group-card">
+          <div class="gc-top"><span class="gc-name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>97DJOS2YC2KSA5</span><span class="gc-menu">&#8942;</span></div>
+          <div class="gc-stat"><span>Download Pending</span><b>0</b></div>
+          <div class="gc-stat"><span>Not Approved</span><b>0</b></div>
+        </div>
+        <div class="group-card">
+          <div class="gc-top"><span class="gc-name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Marketing Group</span><span class="gc-menu">&#8942;</span></div>
+          <div class="gc-stat"><span>Download Pending</span><b>0</b></div>
+          <div class="gc-stat"><span>Not Approved</span><b><a href="#">19</a></b></div>
+        </div>
+        <div class="group-card">
+          <div class="gc-top"><span class="gc-name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>test11</span><span class="gc-menu">&#8942;</span></div>
+          <div class="gc-stat"><span>Download Pending</span><b>0</b></div>
+          <div class="gc-stat"><span>Not Approved</span><b><a href="#">19</a></b></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  const modes = document.querySelectorAll('input[name="approve-mode"]');
+  const autoCard = document.getElementById('autonomous-card');
+
+  const scoreSlider = document.getElementById('score-slider');
+  const sliderFill = document.getElementById('slider-fill');
+  const sliderChip = document.getElementById('slider-chip');
+  const chipValue = document.getElementById('chip-value');
+  const scoreDec = document.getElementById('score-dec');
+  const scoreInc = document.getElementById('score-inc');
+  const maturityDays = document.getElementById('maturity-days');
+  const maturityUnit = document.getElementById('maturity-unit');
+
+  function updateScore(){
+    const min = parseInt(scoreSlider.min, 10);
+    const max = parseInt(scoreSlider.max, 10);
+    const val = Math.min(max, Math.max(min, parseInt(scoreSlider.value, 10) || min));
+    scoreSlider.value = val;
+    const pct = ((val - min) / (max - min)) * 100;
+    sliderFill.style.width = pct + '%';
+    sliderChip.style.left = pct + '%';
+    chipValue.textContent = val;
+  }
+
+  function step(dir){
+    scoreSlider.value = parseInt(scoreSlider.value, 10) + dir;
+    updateScore();
+  }
+
+  function syncVisibility(){
+    const on = document.getElementById('mode-autonomous').checked;
+    autoCard.hidden = !on;
+    if (on){
+      autoCard.classList.remove('fade-enter');
+      void autoCard.offsetWidth;
+      autoCard.classList.add('fade-enter');
+    }
+  }
+
+  modes.forEach(m => m.addEventListener('change', syncVisibility));
+  scoreSlider.addEventListener('input', updateScore);
+  scoreDec.addEventListener('click', () => step(-1));
+  scoreInc.addEventListener('click', () => step(1));
+  maturityDays.addEventListener('input', () => {
+    const v = Math.max(1, parseInt(maturityDays.value, 10) || 1);
+    maturityDays.value = v;
+  });
+
+  updateScore();
+  syncVisibility();
+</script>
